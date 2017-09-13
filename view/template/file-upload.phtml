@@ -1,0 +1,183 @@
+<?php
+/** @var \Popov\Users\View\Helper\User $userHelper */
+$userHelper = $this->user();
+$user = $userHelper->getUser();
+$resource = 'file-upload/index';
+
+$prefix = (isset($prefix)) ? '-' . $prefix : '';
+$classDisabled = ' readonly-text';
+$disabled = ' disabled=""';
+
+// Setting Upload
+$classDisabledUpload = '';
+$disabledUpload = '';
+
+if (isset($permissionUploadFile) && ! $permissionUploadFile)
+{
+    $classDisabledUpload = $classDisabled;
+    $disabledUpload = $disabled;
+}
+
+// Setting Delete
+$classDisabledDelete = '';
+$disabledDelete = '';
+
+if (isset($permissionDeleteFile) && ! $permissionDeleteFile)
+{
+    $classDisabledDelete = $classDisabled;
+    $disabledDelete = $disabled;
+}
+
+//\Zend\Debug\Debug::dump(get_class($userHelper->getUserPlugin()->getSm())); die(__METHOD__);
+//if (! in_array('all', $user['resource']) && !$userHelper->hasAccess($resource)) {
+if (!$userHelper->isAdmin() && !$userHelper->hasAccess($resource)) { ?>
+    <p class="error_message">No access to upload files</p>
+<?php }
+else
+{
+?>
+    <!-- jQuery UI styles -->
+<!--    <link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/jquery-ui.css">-->
+
+    <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+    <link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/jquery.fileupload-ui.css">
+<!--    <link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/main.min.css?40">-->
+
+    <div id="fileupload<?=$prefix?>">
+        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+        <div class="row fileupload-buttonbar">
+            <div class="col-lg-7 fileupload-buttons">
+                <!-- The fileinput-button span is used to style the file input field as button -->
+                <span class="fileinput-button ui-button ui-widget ui-state-default ui-button-text-icon-primary<?=$classDisabledUpload?>">
+                    <i class="glyphicon glyphicon-plus ui-icon ui-button-icon-primary ui-icon-plusthick"></i>
+                    <span class="ui-button-text">
+                        <span>Add files...</span>
+                    </span>
+                    <input type="file" name="files[]" multiple<?=$disabledUpload?>>
+                </span>
+                <button type="button" class="start ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary<?=$classDisabledUpload?>">
+                    <i class="glyphicon glyphicon-upload ui-button-icon-primary ui-icon ui-icon-circle-arrow-e"></i>
+                    <span class="ui-button-text">Start upload</span>
+                </button>
+                <button type="reset" class="cancel ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary<?=$classDisabledUpload?>">
+                    <i class="glyphicon glyphicon-ban-circle ui-button-icon-primary ui-icon ui-icon-cancel"></i>
+                    <span class="ui-button-text">Cancel upload</span>
+                </button>
+                <button type="button" class="delete ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary<?=$classDisabledDelete?>">
+                    <i class="glyphicon glyphicon-trash ui-button-icon-primary ui-icon ui-icon-trash"></i>
+                    <span class="ui-button-text">Delete</span>
+                </button>
+                <input type="checkbox" class="toggle"<?=$disabledDelete?>>
+                <!-- The global file processing state -->
+                <span class="fileupload-process"></span>
+            </div>
+            <!-- The global progress state -->
+            <div class="col-lg-5 fileupload-progress fade">
+                <!-- The global progress bar -->
+                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                </div>
+                <!-- The extended global progress state -->
+                <div class="progress-extended">&nbsp;</div>
+            </div>
+        </div>
+        <!-- The table listing the files available for upload/download -->
+        <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
+    </div>
+
+    <!-- The template to display files available for download -->
+    <script id="template-download<?=$prefix?>" type="text/x-tmpl">
+        {% for (var i=0, file; file=o.files[i]; i++) { %}
+        <tr class="template-download fade">
+            <td>
+                <p class="name">
+                    {% if (file.url && file.error) { %}
+                    {%=file.name%}
+                    {% } else if (file.url) { %}
+                    <a href="{%=file.url%}" target="_blank" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>
+                    {% if (file.type == 'image/jpeg' || file.type == 'image/png') { %}
+                    <img src="{%=file.url%}" width="50" title="{%=file.name%}" alt="{%=file.name%}">
+                    {% } else { %}
+                    {%=file.name%}
+                    {% } %}
+                    </a>
+                    {% } else { %}
+                    <span>{%=file.name%}</span>
+                    {% } %}
+                </p>
+                {% if (file.error) { %}
+                <div class="error"><span class="label label-danger">Error:</span> {%=file.error%}</div>
+                {% } %}
+            </td>
+            <td>
+                <span class="size">{%=o.formatFileSize(file.size)%}</span>
+            </td>
+            <td>
+                <span class="user-creator">
+                    {% if (file.creator) { %}
+                    ({%=file.creator%} {%=file.dateCreate%})
+                    {% } %}
+                </span>
+            </td>
+            <td>
+                {% if (file.deleteUrl) { %}
+                <button class="btn-danger delete ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary<?=$classDisabledDelete?>"<?=$disabledDelete?> data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+                <i class="glyphicon glyphicon-trash ui-button-icon-primary ui-icon ui-icon-trash"></i>
+                <span class="ui-button-text">Delete</span>
+                </button>
+                <input type="checkbox" name="delete" value="1" class="toggle"<?=$disabledDelete?>>
+                {% } else { %}
+                <button class="btn-warning cancel ui-button ui-widget ui-state-default ui-button-text-icon-primary">
+                    <i class="glyphicon glyphicon-ban-circle ui-button-icon-primary ui-icon ui-icon-cancel"></i>
+                    <span class="ui-button-text">Cancel</span>
+                </button>
+                {% } %}
+            </td>
+        </tr>
+        {% } %}
+    </script>
+
+    <?php if (! isset($loadJs) || $loadJs) : ?>
+        <!-- The template to display files available for upload -->
+        <script id="template-upload" type="text/x-tmpl">
+            {% for (var i=0, file; file=o.files[i]; i++) { %}
+            <tr class="template-upload fade">
+                <td>
+                    <p class="name">{%=file.name%}</p>
+                    <strong class="error text-danger"></strong>
+                </td>
+                <td colspan="2">
+                    <p class="size">Processing...</p>
+                    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                    </div>
+                </td>
+                <td>
+                    {% if (!i && !o.options.autoUpload) { %}
+                    <button class="btn btn-primary start ui-button ui-widget ui-state-default ui-button-text-icon-primary" disabled>
+                        <i class="glyphicon glyphicon-upload ui-button-icon-primary ui-icon ui-icon-circle-arrow-e"></i>
+                        <span class="ui-button-text">Start</span>
+                    </button>
+                    {% } %}
+                    {% if (!i) { %}
+                    <button class="btn btn-warning cancel ui-button ui-widget ui-state-default ui-button-text-icon-primary">
+                        <i class="glyphicon glyphicon-ban-circle ui-button-icon-primary ui-icon ui-icon-cancel"></i>
+                        <span class="ui-button-text">Cancel</span>
+                    </button>
+                    {% } %}
+                </td>
+            </tr>
+            {% } %}
+        </script>
+
+        <!-- Load jQuery and the necessary widget JS files to enable file upload -->
+<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/vendor/jquery.ui.widget.js"></script>-->
+<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/vendor/tmpl.min.js"></script>-->
+<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.iframe-transport.js"></script>-->
+<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.fileupload.js"></script>-->
+<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.fileupload-process.js"></script>-->
+<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.fileupload-ui.js"></script>-->
+<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/main.js?21"></script>-->
+    <?php endif; ?>
+<?php } ?>
