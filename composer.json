@@ -1,0 +1,27 @@
+{
+  "name": "popov/zfc-file-upload",
+  "description": "ZF2 File Uploader",
+  "type": "zf-module",
+  "license": "MIT",
+  "keywords": [
+    "zf2",
+    "file",
+    "upload"
+  ],
+  "authors": [
+    {
+      "name": "Serhii Popov",
+      "email": "popow.sergiy@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=5.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Popov\\ZfcFileUpload\\": "src/"
+    }
+  }
+}
