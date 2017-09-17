@@ -12,7 +12,7 @@
  * @author Serhii Popov <popow.sergiy@gmail.com>
  * @license https://opensource.org/licenses/MIT The MIT License (MIT)
  */
-namespace Popov\ZfcFileUpload\From;
+namespace Popov\ZfcFileUpload\Form;
 
 use Zend\Form\Form;
 
@@ -39,7 +39,8 @@ class UploadForm extends Form
             'type'  => 'file',
             'name' => 'file',
             'attributes' => [
-                'id' => 'file'
+                'id' => 'file',
+                'multiple' => true
             ],
             'options' => [
                 'label' => 'Image file',

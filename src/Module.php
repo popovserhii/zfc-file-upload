@@ -16,6 +16,11 @@ class Module
         #    ->attach('Popov\Documents\Controller\DocumentsController', ['documents.fileSession'], function (Event $evt) {
         #        return $this->getSessionFiles($evt);
         #    });
+
+        $mm->getEventManager()->getSharedManager()
+            ->attach(Controller\FileUploadController::class, ['loadFileSession'], function(Event $evt) {
+                return $this->getSessionFiles($evt, false);
+            });
     }
 
     public function getConfig()

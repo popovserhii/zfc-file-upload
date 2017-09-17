@@ -1,7 +1,7 @@
 <?php
-/** @var \Popov\Users\View\Helper\User $userHelper */
+/** @var \Popov\ZfcUser\View\Helper\UserHelper $userHelper */
 $userHelper = $this->user();
-$user = $userHelper->getUser();
+$user = $userHelper->current();
 $resource = 'file-upload/index';
 
 $prefix = (isset($prefix)) ? '-' . $prefix : '';
@@ -12,8 +12,7 @@ $disabled = ' disabled=""';
 $classDisabledUpload = '';
 $disabledUpload = '';
 
-if (isset($permissionUploadFile) && ! $permissionUploadFile)
-{
+if (isset($permissionUploadFile) && ! $permissionUploadFile) {
     $classDisabledUpload = $classDisabled;
     $disabledUpload = $disabled;
 }
@@ -22,27 +21,21 @@ if (isset($permissionUploadFile) && ! $permissionUploadFile)
 $classDisabledDelete = '';
 $disabledDelete = '';
 
-if (isset($permissionDeleteFile) && ! $permissionDeleteFile)
-{
+if (isset($permissionDeleteFile) && ! $permissionDeleteFile) {
     $classDisabledDelete = $classDisabled;
     $disabledDelete = $disabled;
 }
 
-//\Zend\Debug\Debug::dump(get_class($userHelper->getUserPlugin()->getSm())); die(__METHOD__);
-//if (! in_array('all', $user['resource']) && !$userHelper->hasAccess($resource)) {
-if (!$userHelper->isAdmin() && !$userHelper->hasAccess($resource)) { ?>
+if (!$this->user()->isAdmin() && !$this->user()->hasAccess($resource)) : ?>
     <p class="error_message">No access to upload files</p>
-<?php }
-else
-{
-?>
-    <!-- jQuery UI styles -->
-<!--    <link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/jquery-ui.css">-->
+<?php else : ?>
+	<!-- jQuery UI styles -->
+	<!--<link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/jquery-ui.css">-->
 
-    <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
-    <link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/jquery.fileupload.css">
-    <link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/jquery.fileupload-ui.css">
-<!--    <link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/main.min.css?40">-->
+	<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+	<!--<link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/jquery.fileupload.css">-->
+	<!--<link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/jquery.fileupload-ui.css">-->
+	<!--<link rel="stylesheet" href="/media/js/jquery/jquery-file-upload-9.5.7/css/main.min.css?40">-->
 
     <div id="fileupload<?=$prefix?>">
         <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
@@ -172,12 +165,12 @@ else
         </script>
 
         <!-- Load jQuery and the necessary widget JS files to enable file upload -->
-<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/vendor/jquery.ui.widget.js"></script>-->
-<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/vendor/tmpl.min.js"></script>-->
-<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.iframe-transport.js"></script>-->
-<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.fileupload.js"></script>-->
-<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.fileupload-process.js"></script>-->
-<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.fileupload-ui.js"></script>-->
-<!--        <script src="/media/js/jquery/jquery-file-upload-9.5.7/js/main.js?21"></script>-->
+		<!--<script src="/media/js/jquery/jquery-file-upload-9.5.7/js/vendor/jquery.ui.widget.js"></script>-->
+		<!--<script src="/media/js/jquery/jquery-file-upload-9.5.7/js/vendor/tmpl.min.js"></script>-->
+		<!--<script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.iframe-transport.js"></script>-->
+		<!--<script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.fileupload.js"></script>-->
+		<!--<script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.fileupload-process.js"></script>-->
+		<!--<script src="/media/js/jquery/jquery-file-upload-9.5.7/js/jquery.fileupload-ui.js"></script>-->
+		<!--<script src="/media/js/jquery/jquery-file-upload-9.5.7/js/main.js?21"></script>-->
     <?php endif; ?>
-<?php } ?>
+<?php endif; ?>

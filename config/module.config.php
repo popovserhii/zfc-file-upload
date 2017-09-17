@@ -21,15 +21,10 @@ return [
 
     'service_manager' => [
         'aliases' => [
-            'FileUploadService' => 'Popov\FileUpload\Service\FileUploadService',
+            'FileUploadService' => Service\FileUploadService::class,
         ],
         'factories' => [
-            'Popov\FileUpload\Service\FileUploadService' => function ($sm) {
-                $em = $sm->get('Doctrine\ORM\EntityManager');
-                $service = \Popov\Agere\Service\Factory\Helper::create('fileUpload/fileUpload', $em);
-
-                return $service;
-            },
+            Service\FileUploadService::class => Service\Factory\FileUploadServiceFactory::class,
         ],
     ],
 ];
