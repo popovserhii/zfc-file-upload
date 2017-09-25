@@ -119,7 +119,7 @@ class FileUploadService implements ObjectManagerAwareInterface, UserAwareInterfa
         }
 
         // save all persisted files
-        $fileService->save();
+        $fileService->getObjectManager()->flush();
 
         $i = 0;
         foreach ($collections as $formName => $collection) {
